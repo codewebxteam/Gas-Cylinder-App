@@ -39,7 +39,7 @@ export default function SummaryScreen() {
         { label: 'Tue', value: 0 },
         { label: 'Wed', value: 0 },
         { label: 'Thu', value: 0 },
-        { label: 'Fri', value: 0 },
+        { label: 'Fri', value: deliveries.length },
         { label: 'Sat', value: 0 },
         { label: 'Sun', value: 0 },
     ];

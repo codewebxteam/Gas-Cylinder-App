@@ -19,29 +19,50 @@ export interface Driver {
     isOnline: boolean;
 }
 
+// Emptied for real-time connection readiness
 const mockDeliveries: Delivery[] = [];
 
 export const mockApiService = {
     getDeliveries: async (): Promise<Delivery[]> => {
         return new Promise((resolve) => {
+            // This will be replaced by: return axios.get('/api/deliveries')
             setTimeout(() => resolve(mockDeliveries), 1000);
         });
     },
     updateDeliveryStatus: async (id: string, status: Delivery['deliveryStatus']): Promise<void> => {
         return new Promise((resolve) => {
-            setTimeout(() => resolve(), 500);
+            // This will be replaced by: return axios.patch('/api/deliveries/' + id, { status })
+            setTimeout(() => {
+                const index = mockDeliveries.findIndex(d => d.id === id);
+                if (index !== -1) {
+                    mockDeliveries[index].deliveryStatus = status;
+                }
+                resolve();
+            }, 500);
         });
     },
     confirmPayment: async (id: string, amount: number, mode: 'Cash' | 'UPI', txnId?: string): Promise<void> => {
         return new Promise((resolve) => {
-            setTimeout(() => resolve(), 800);
+            // This will be replaced by: return axios.post('/api/payments', { id, amount, mode, txnId })
+            setTimeout(() => {
+                const index = mockDeliveries.findIndex(d => d.id === id);
+                if (index !== -1) {
+                    mockDeliveries[index].paymentStatus = 'Paid';
+                    mockDeliveries[index].deliveryStatus = 'Delivered';
+                    mockDeliveries[index].paymentMode = mode;
+                    mockDeliveries[index].amount = amount;
+                    mockDeliveries[index].transactionId = txnId;
+                }
+                resolve();
+            }, 800);
         });
     },
     getDriverProfile: async (): Promise<Driver> => {
         return new Promise((resolve) => {
+            // This will be replaced by: return axios.get('/api/profile')
             setTimeout(() => resolve({
                 id: 'USER_ID',
-                name: 'Delivery Partner',
+                name: 'Driver',
                 phone: '+91 00000 00000',
                 role: 'Driver',
                 isOnline: true,

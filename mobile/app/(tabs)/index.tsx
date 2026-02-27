@@ -19,12 +19,17 @@ export default function DashboardScreen() {
     const router = useRouter();
     const [refreshing, setRefreshing] = useState(false);
     const [deliveries, setDeliveries] = useState<Delivery[]>([]);
+    const [driverName, setDriverName] = useState('');
     const [loading, setLoading] = useState(true);
 
     const fetchData = async () => {
         setLoading(true);
-        const data = await mockApiService.getDeliveries();
-        setDeliveries(data);
+        const [deliveriesData, driverData] = await Promise.all([
+            mockApiService.getDeliveries(),
+            mockApiService.getDriverProfile()
+        ]);
+        setDeliveries(deliveriesData);
+        setDriverName(driverData.name);
         setLoading(false);
     };
 
@@ -63,7 +68,7 @@ export default function DashboardScreen() {
             >
                 <View style={styles.header}>
                     <View>
-                        <Text style={styles.greeting}>Hello, {deliveries.length > 0 ? 'Team' : 'User'}!</Text>
+                        <Text style={styles.greeting}>Hello, {driverName || 'User'}!</Text>
                         <Text style={styles.date}>{today}</Text>
                     </View>
                     <TouchableOpacity
