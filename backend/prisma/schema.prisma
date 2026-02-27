@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  STAFF
+  DRIVER
+}
+
+enum OrderStatus {
+  PENDING
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentType {
+  CASH
+  UPI
+}
+
+model User {
+  id              String   @id @default(uuid())
+  email           String   @unique
+  password        String
+  name            String
+  role            Role     @default(DRIVER)
+  phone           String?
+  licenseNumber   String?
+  vehicleNumber   String?
+  orders          Order[]  @relation("AssignedStaff")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Order {
+  id              String        @id @default(uuid())
+  customerName    String
+  customerAddress String
+  customerPhone   String?
+  cylinderType    String
+  status          OrderStatus   @default(PENDING)
+  assignedStaffId String?
+  assignedStaff   User?         @relation("AssignedStaff", fields: [assignedStaffId], references: [id])
+  transactions    Transaction[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model Transaction {
+  id          String      @id @default(uuid())
+  orderId     String      @unique
+  order       Order       @relation(fields: [orderId], references: [id])
+  paymentType PaymentType
+  amount      Float
+  timestamp   DateTime    @default(now())
+}
+
+model Inventory {
+  id           String   @id @default(uuid())
+  cylinderType String   @unique
+  stockLevel   Int      @default(0)
+  updatedAt    DateTime @updatedAt
+}
