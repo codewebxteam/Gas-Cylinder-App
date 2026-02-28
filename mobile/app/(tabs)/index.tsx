@@ -13,23 +13,21 @@ import {
 import { CustomButton } from '../../components/CustomButton';
 import { SummaryCard } from '../../components/SummaryCard';
 import { Colors } from '../../constants/Colors';
+import { useAuth } from '../../context/AuthContext';
 import { Delivery, mockApiService } from '../../services/mockApi';
 
 export default function DashboardScreen() {
     const router = useRouter();
+    const { user } = useAuth();
     const [refreshing, setRefreshing] = useState(false);
     const [deliveries, setDeliveries] = useState<Delivery[]>([]);
-    const [driverName, setDriverName] = useState('');
     const [loading, setLoading] = useState(true);
 
     const fetchData = async () => {
         setLoading(true);
-        const [deliveriesData, driverData] = await Promise.all([
-            mockApiService.getDeliveries(),
-            mockApiService.getDriverProfile()
-        ]);
+        // Only fetch deliveries, driver info comes from useAuth()
+        const deliveriesData = await mockApiService.getDeliveries();
         setDeliveries(deliveriesData);
-        setDriverName(driverData.name);
         setLoading(false);
     };
 
@@ -68,7 +66,7 @@ export default function DashboardScreen() {
             >
                 <View style={styles.header}>
                     <View>
-                        <Text style={styles.greeting}>Hello, {driverName || 'User'}!</Text>
+                        <Text style={styles.greeting}>Hello, {user?.name || 'User'}!</Text>
                         <Text style={styles.date}>{today}</Text>
                     </View>
                     <TouchableOpacity

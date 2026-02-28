@@ -1,0 +1,78 @@
+const express = require('express');
+const router = express.Router();
+const prisma = require('../lib/prisma');
+const { authenticateToken, authorizeRoles } = require('../middleware/auth');
+
+// Get all staff and drivers (Admin/Manager)
+router.get('/', authenticateToken, authorizeRoles('ADMIN', 'MANAGER'), async (req, res) => {
+    try {
+        const staff = await prisma.user.findMany({
+            where: {
+                role: {
+                    in: ['STAFF', 'DRIVER']
+                }
+            },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                phone: true,
+                vehicleNumber: true,
+                licenseNumber: true,
+                createdAt: true
+            }
+        });
+        res.json(staff);
+    } catch (error) {
+        console.error('Fetch staff error:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// Add new staff (Admin Only)
+router.post('/', authenticateToken, authorizeRoles('ADMIN'), async (req, res) => {
+    try {
+        const { name, email, password, role, phone, vehicleNumber, licenseNumber } = req.body;
+
+        const existingUser = await prisma.user.findUnique({ where: { email } });
+        if (existingUser) {
+            return res.status(400).json({ message: 'User already exists' });
+        }
+
+        const bcrypt = require('bcryptjs');
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newUser = await prisma.user.create({
+            data: {
+                name,
+                email,
+                password: hashedPassword,
+                role,
+                phone,
+                vehicleNumber,
+                licenseNumber
+            }
+        });
+
+        res.status(201).json({ message: 'Staff member added successfully' });
+    } catch (error) {
+        console.error('Add staff error:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// Delete staff (Admin Only)
+router.delete('/:id', authenticateToken, authorizeRoles('ADMIN'), async (req, res) => {
+    try {
+        await prisma.user.delete({
+            where: { id: req.params.id }
+        });
+        res.json({ message: 'Staff member deleted successfully' });
+    } catch (error) {
+        console.error('Delete staff error:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+module.exports = router;

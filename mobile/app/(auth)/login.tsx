@@ -1,5 +1,4 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
     Alert,
@@ -14,9 +13,10 @@ import {
 } from 'react-native';
 import { CustomButton } from '../../components/CustomButton';
 import { Colors } from '../../constants/Colors';
+import { useAuth } from '../../context/AuthContext';
 
 export default function LoginScreen() {
-    const router = useRouter();
+    const { login } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
@@ -29,12 +29,8 @@ export default function LoginScreen() {
         }
 
         setLoading(true);
-        // Simulate API call
-        setTimeout(() => {
-            setLoading(false);
-            // In a real app, you would save the token here
-            router.replace('/(tabs)' as any);
-        }, 1500);
+        const success = await login(email, password);
+        setLoading(false);
     };
 
     return (

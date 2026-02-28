@@ -1,0 +1,36 @@
+const express = require('express');
+const router = express.Router();
+const prisma = require('../lib/prisma');
+const { authenticateToken, authorizeRoles } = require('../middleware/auth');
+
+// Get current inventory (Admin/Manager)
+router.get('/', authenticateToken, authorizeRoles('ADMIN', 'MANAGER'), async (req, res) => {
+    try {
+        const inventory = await prisma.inventory.findMany();
+        res.json(inventory);
+    } catch (error) {
+        console.error('Fetch inventory error:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// Update stock levels (Admin/Manager)
+router.patch('/:type', authenticateToken, authorizeRoles('ADMIN', 'MANAGER'), async (req, res) => {
+    try {
+        const { cylinderType } = req.params;
+        const { stockLevel } = req.body;
+
+        const updated = await prisma.inventory.upsert({
+            where: { cylinderType },
+            update: { stockLevel },
+            create: { cylinderType, stockLevel }
+        });
+
+        res.json(updated);
+    } catch (error) {
+        console.error('Update inventory error:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+module.exports = router;

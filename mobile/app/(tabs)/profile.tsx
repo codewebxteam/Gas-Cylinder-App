@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Stack, useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import { Stack } from 'expo-router';
+import React, { useState } from 'react';
 import {
     Alert,
     SafeAreaView,
@@ -13,23 +13,11 @@ import {
 } from 'react-native';
 import { CustomButton } from '../../components/CustomButton';
 import { Colors } from '../../constants/Colors';
-import { Driver, mockApiService } from '../../services/mockApi';
+import { useAuth } from '../../context/AuthContext';
 
 export default function ProfileScreen() {
-    const router = useRouter();
-    const [driver, setDriver] = useState<Driver | null>(null);
+    const { user, logout } = useAuth();
     const [isOnline, setIsOnline] = useState(true);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchProfile = async () => {
-            const data = await mockApiService.getDriverProfile();
-            setDriver(data);
-            setIsOnline(data.isOnline);
-            setLoading(false);
-        };
-        fetchProfile();
-    }, []);
 
     const handleLogout = () => {
         Alert.alert(
@@ -40,13 +28,11 @@ export default function ProfileScreen() {
                 {
                     text: 'Logout',
                     style: 'destructive',
-                    onPress: () => router.replace('/(auth)/login' as any)
+                    onPress: () => logout()
                 }
             ]
         );
     };
-
-    if (loading) return null;
 
     return (
         <SafeAreaView style={styles.container}>
@@ -69,8 +55,8 @@ export default function ProfileScreen() {
                     <View style={styles.avatarContainer}>
                         <Ionicons name="person" size={50} color={Colors.primary} />
                     </View>
-                    <Text style={styles.name}>{driver?.name}</Text>
-                    <Text style={styles.role}>{driver?.role}</Text>
+                    <Text style={styles.name}>{user?.name}</Text>
+                    <Text style={styles.role}>{user?.role}</Text>
                 </View>
 
                 <View style={styles.detailsCard}>
@@ -78,15 +64,15 @@ export default function ProfileScreen() {
                         <Ionicons name="call-outline" size={24} color={Colors.textLight} />
                         <View style={styles.detailText}>
                             <Text style={styles.detailLabel}>Phone Number</Text>
-                            <Text style={styles.detailValue}>{driver?.phone}</Text>
+                            <Text style={styles.detailValue}>{user?.phone || '+91 XXXXX XXXXX'}</Text>
                         </View>
                     </View>
                     <View style={styles.divider} />
                     <View style={styles.detailItem}>
                         <Ionicons name="mail-outline" size={24} color={Colors.textLight} />
                         <View style={styles.detailText}>
-                            <Text style={styles.detailLabel}>Employee ID</Text>
-                            <Text style={styles.detailValue}>EMP-XXXX-XXXX</Text>
+                            <Text style={styles.detailLabel}>Employee ID (Email)</Text>
+                            <Text style={styles.detailValue}>{user?.email}</Text>
                         </View>
                     </View>
                     <View style={styles.divider} />
@@ -94,7 +80,15 @@ export default function ProfileScreen() {
                         <Ionicons name="car-outline" size={24} color={Colors.textLight} />
                         <View style={styles.detailText}>
                             <Text style={styles.detailLabel}>Vehicle Number</Text>
-                            <Text style={styles.detailValue}>XX-00-XX-0000</Text>
+                            <Text style={styles.detailValue}>{user?.vehicleNumber || 'Not assigned'}</Text>
+                        </View>
+                    </View>
+                    <View style={styles.divider} />
+                    <View style={styles.detailItem}>
+                        <Ionicons name="card-outline" size={24} color={Colors.textLight} />
+                        <View style={styles.detailText}>
+                            <Text style={styles.detailLabel}>License Number</Text>
+                            <Text style={styles.detailValue}>{user?.licenseNumber || 'Not assigned'}</Text>
                         </View>
                     </View>
                 </View>
