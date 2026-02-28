@@ -32,7 +32,7 @@ router.get('/stats', authenticateToken, authorizeRoles('ADMIN', 'MANAGER'), asyn
             })
         ]);
 
-        const totalCollection = transactions.reduce((sum, text) => sum + text.amount, 0);
+        const totalCollection = transactions.reduce((sum, t) => sum + t.amount, 0);
         const cashCollection = transactions.filter(t => t.paymentType === 'CASH').reduce((sum, t) => sum + t.amount, 0);
         const upiCollection = transactions.filter(t => t.paymentType === 'UPI').reduce((sum, t) => sum + t.amount, 0);
 

@@ -56,17 +56,5 @@ export const mockApiService = {
                 resolve();
             }, 800);
         });
-    },
-    getDriverProfile: async (): Promise<Driver> => {
-        return new Promise((resolve) => {
-            // This will be replaced by: return axios.get('/api/profile')
-            setTimeout(() => resolve({
-                id: 'USER_ID',
-                name: 'Driver',
-                phone: '+91 00000 00000',
-                role: 'Driver',
-                isOnline: true,
-            }), 500);
-        });
     }
 };

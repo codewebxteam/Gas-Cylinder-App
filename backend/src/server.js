@@ -27,17 +27,6 @@ app.get('/health', (req, res) => {
     res.json({ status: 'ok', message: 'GasFlow Backend is running' });
 });
 
-// Sample route to check DB connection
-app.get('/test-db', async (req, res) => {
-    try {
-        const userCount = await prisma.user.count();
-        res.json({ success: true, userCount });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, error: 'Database connection failed' });
-    }
-});
-
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on http://127.0.0.1:${PORT}`);
 });

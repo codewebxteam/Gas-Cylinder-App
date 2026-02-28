@@ -17,13 +17,13 @@ router.get('/', authenticateToken, authorizeRoles('ADMIN', 'MANAGER'), async (re
 // Update stock levels (Admin/Manager)
 router.patch('/:type', authenticateToken, authorizeRoles('ADMIN', 'MANAGER'), async (req, res) => {
     try {
-        const { cylinderType } = req.params;
+        const { type } = req.params;
         const { stockLevel } = req.body;
 
         const updated = await prisma.inventory.upsert({
-            where: { cylinderType },
+            where: { cylinderType: type },
             update: { stockLevel },
-            create: { cylinderType, stockLevel }
+            create: { cylinderType: type, stockLevel }
         });
 
         res.json(updated);

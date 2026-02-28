@@ -12,7 +12,6 @@ import Inventory from './pages/Inventory';
 import LiveMonitoring from './pages/LiveMonitoring';
 import Login from './pages/Login';
 import OrderManagement from './pages/OrderManagement';
-import Signup from './pages/Signup';
 import StaffManagement from './pages/StaffManagement';
 
 const Unauthorized = () => (
@@ -39,7 +38,6 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
           
           <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']} />}>
