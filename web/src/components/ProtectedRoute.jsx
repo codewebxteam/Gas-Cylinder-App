@@ -14,6 +14,10 @@ const ProtectedRoute = ({ allowedRoles }) => {
     return <Navigate to="/unauthorized" replace />;
   }
 
+  if (user.role === 'MANAGER' && !user.isApproved && window.location.pathname !== '/pending-approval') {
+    return <Navigate to="/pending-approval" replace />;
+  }
+
   return <Outlet />;
 };
 

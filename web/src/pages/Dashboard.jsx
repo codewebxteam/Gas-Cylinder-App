@@ -40,14 +40,7 @@ const Dashboard = () => {
     upiPayments: 0
   });
 
-  const chartData = [
-    { name: '08:00', deliveries: 2 },
-    { name: '10:00', deliveries: 5 },
-    { name: '12:00', deliveries: 8 },
-    { name: '14:00', deliveries: 10 },
-    { name: '16:00', deliveries: 7 },
-    { name: '18:00', deliveries: 4 },
-  ];
+  const [chartData, setChartData] = useState([]);
 
   const paymentData = [
     { name: 'Cash', val: stats.cashCollected },
@@ -69,6 +62,7 @@ const Dashboard = () => {
           cashCollected: data.cashCollection,
           upiPayments: data.upiCollection
         });
+        setChartData(data.hourlyStats || []);
       } catch (err) {
         console.error(err);
       }

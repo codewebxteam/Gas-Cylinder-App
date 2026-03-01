@@ -12,18 +12,46 @@ router.get('/', authenticateToken, authorizeRoles('ADMIN', 'MANAGER'), async (re
                     in: ['STAFF', 'DRIVER']
                 }
             },
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                role: true,
-                phone: true,
-                vehicleNumber: true,
-                licenseNumber: true,
-                createdAt: true
+            include: {
+                orders: {
+                    select: {
+                        status: true,
+                        transactions: {
+                            select: {
+                                amount: true
+                            }
+                        }
+                    }
+                }
             }
         });
-        res.json(staff);
+
+        const formattedStaff = staff.map(u => {
+            const deliveredOrders = u.orders.filter(o => o.status === 'DELIVERED');
+            const totalCollection = deliveredOrders.reduce((sum, o) => {
+                const orderSum = o.transactions.reduce((tSum, t) => tSum + t.amount, 0);
+                return sum + orderSum;
+            }, 0);
+
+            return {
+                id: u.id,
+                name: u.name,
+                email: u.email,
+                role: u.role,
+                phone: u.phone,
+                vehicleNumber: u.vehicleNumber,
+                licenseNumber: u.licenseNumber,
+                latitude: u.latitude,
+                longitude: u.longitude,
+                createdAt: u.createdAt,
+                totalOrders: u.orders.length,
+                doneOrders: deliveredOrders.length,
+                collection: totalCollection,
+                progress: u.orders.length > 0 ? Math.round((deliveredOrders.length / u.orders.length) * 100) : 0
+            };
+        });
+
+        res.json(formattedStaff);
     } catch (error) {
         console.error('Fetch staff error:', error);
         res.status(500).json({ message: 'Internal server error' });
@@ -51,7 +79,8 @@ router.post('/', authenticateToken, authorizeRoles('ADMIN'), async (req, res) =>
                 role,
                 phone,
                 vehicleNumber,
-                licenseNumber
+                licenseNumber,
+                isApproved: true
             }
         });
 

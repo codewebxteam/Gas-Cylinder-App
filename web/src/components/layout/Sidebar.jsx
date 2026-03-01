@@ -5,6 +5,7 @@ import {
     LogOut,
     Package,
     ShoppingCart,
+    UserCheck,
     UserPlus,
     Users
 } from 'lucide-react';
@@ -23,6 +24,7 @@ const Sidebar = () => {
     { name: 'Inventory', path: '/inventory', icon: Package, roles: ['ADMIN'] },
     { name: 'Live Monitoring', path: '/monitoring', icon: Activity, roles: ['ADMIN', 'MANAGER'] },
     { name: 'Financial Settlement', path: '/settlement', icon: Calculator, roles: ['ADMIN', 'MANAGER'] },
+    { name: 'Manager Approvals', path: '/approvals', icon: UserCheck, roles: ['ADMIN'] },
   ];
 
   const filteredItems = menuItems.filter(item => item.roles.includes(user?.role));

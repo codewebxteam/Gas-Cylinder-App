@@ -92,17 +92,32 @@ router.get('/report', authenticateToken, authorizeRoles('ADMIN', 'MANAGER'), asy
             }
         });
 
-        const transactions = orders.flatMap(o => o.transactions);
-        const cashTransactions = transactions.filter(t => t.paymentType === 'CASH');
-        const upiTransactions = transactions.filter(t => t.paymentType === 'UPI');
+        const cashTx = [];
+        const upiTx = [];
 
-        const totalCash = cashTransactions.reduce((sum, t) => sum + t.amount, 0);
-        const totalUPI = upiTransactions.reduce((sum, t) => sum + t.amount, 0);
+        orders.forEach(order => {
+            order.transactions.forEach(t => {
+                const txData = {
+                    id: t.id,
+                    time: new Date(t.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    customer: order.customerName,
+                    orderId: order.id.substring(0, 8).toUpperCase(),
+                    amount: t.amount,
+                    ref: t.id.substring(0, 12).toUpperCase() // Using ID as fallback reference
+                };
+
+                if (t.paymentType === 'CASH') cashTx.push(txData);
+                else upiTx.push(txData);
+            });
+        });
+
+        const totalCash = cashTx.reduce((sum, t) => sum + t.amount, 0);
+        const totalUPI = upiTx.reduce((sum, t) => sum + t.amount, 0);
 
         res.json({
             totalCylinders: orders.length,
-            cashTransactions,
-            upiTransactions,
+            cashTransactions: cashTx,
+            upiTransactions: upiTx,
             totalCash,
             totalUPI,
             expectedTotal: totalCash + totalUPI

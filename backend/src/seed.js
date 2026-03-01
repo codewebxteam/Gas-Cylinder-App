@@ -15,7 +15,8 @@ async function main() {
             name: 'System Admin',
             password: adminPassword,
             role: 'ADMIN',
-            phone: '9999999999'
+            phone: '9999999999',
+            isApproved: true
         },
     });
 
@@ -27,7 +28,8 @@ async function main() {
             name: 'Sales Manager',
             password: managerPassword,
             role: 'MANAGER',
-            phone: '8888888888'
+            phone: '8888888888',
+            isApproved: true
         },
     });
 

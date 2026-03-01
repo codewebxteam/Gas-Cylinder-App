@@ -8,6 +8,7 @@ const staffRoutes = require('./routes/staff');
 const orderRoutes = require('./routes/orders');
 const inventoryRoutes = require('./routes/inventory');
 const dashboardRoutes = require('./routes/dashboard');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -21,6 +22,7 @@ app.use('/staff', staffRoutes);
 app.use('/orders', orderRoutes);
 app.use('/inventory', inventoryRoutes);
 app.use('/dashboard', dashboardRoutes);
+app.use('/admin', adminRoutes);
 
 // Basic health check
 app.get('/health', (req, res) => {

@@ -11,7 +11,10 @@ import FinancialSettlement from './pages/FinancialSettlement';
 import Inventory from './pages/Inventory';
 import LiveMonitoring from './pages/LiveMonitoring';
 import Login from './pages/Login';
+import ManagerApproval from './pages/ManagerApproval';
 import OrderManagement from './pages/OrderManagement';
+import PendingApproval from './pages/PendingApproval';
+import Signup from './pages/Signup';
 import StaffManagement from './pages/StaffManagement';
 
 const Unauthorized = () => (
@@ -38,7 +41,12 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
+          
+          <Route element={<ProtectedRoute allowedRoles={['MANAGER']} />}>
+            <Route path="/pending-approval" element={<PendingApproval />} />
+          </Route>
           
           <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']} />}>
             <Route element={<Layout />}>
@@ -52,6 +60,7 @@ function App() {
                 <Route path="/staff" element={<StaffManagement />} />
                 <Route path="/onboard-driver" element={<DriverSignup />} />
                 <Route path="/inventory" element={<Inventory />} />
+                <Route path="/approvals" element={<ManagerApproval />} />
               </Route>
             </Route>
           </Route>

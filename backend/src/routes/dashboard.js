@@ -36,6 +36,31 @@ router.get('/stats', authenticateToken, authorizeRoles('ADMIN', 'MANAGER'), asyn
         const cashCollection = transactions.filter(t => t.paymentType === 'CASH').reduce((sum, t) => sum + t.amount, 0);
         const upiCollection = transactions.filter(t => t.paymentType === 'UPI').reduce((sum, t) => sum + t.amount, 0);
 
+        // Calculate hourly stats for chart
+        const deliveredOrdersForChart = await prisma.order.findMany({
+            where: {
+                status: 'DELIVERED',
+                updatedAt: { gte: new Date(new Date().setHours(0, 0, 0, 0)) }
+            },
+            select: { updatedAt: true }
+        });
+
+        const hourlyStats = Array.from({ length: 12 }, (_, i) => {
+            const hour = i * 2 + 6; // From 06:00 to 20:00 every 2 hours
+            return {
+                name: `${hour.toString().padStart(2, '0')}:00`,
+                deliveries: 0
+            };
+        });
+
+        deliveredOrdersForChart.forEach(order => {
+            const hour = new Date(order.updatedAt).getHours();
+            const index = Math.floor((hour - 6) / 2);
+            if (index >= 0 && index < 12) {
+                hourlyStats[index].deliveries++;
+            }
+        });
+
         res.json({
             metrics: {
                 activeDrivers,
@@ -44,7 +69,8 @@ router.get('/stats', authenticateToken, authorizeRoles('ADMIN', 'MANAGER'), asyn
                 cancelledOrders,
                 totalCollection,
                 cashCollection,
-                upiCollection
+                upiCollection,
+                hourlyStats
             }
         });
     } catch (error) {

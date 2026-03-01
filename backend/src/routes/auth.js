@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const prisma = require('../lib/prisma');
+const { authenticateToken } = require('../middleware/auth');
 
 // Register route (Admin/Manager)
 router.post('/register', async (req, res) => {
@@ -21,7 +22,8 @@ router.post('/register', async (req, res) => {
                 password: hashedPassword,
                 name,
                 role: role || 'MANAGER',
-                phone
+                phone,
+                isApproved: (role === 'ADMIN' || role === 'STAFF' || role === 'DRIVER') ? true : false
             }
         });
 
@@ -69,11 +71,65 @@ router.post('/login', async (req, res) => {
                 role: user.role,
                 phone: user.phone,
                 vehicleNumber: user.vehicleNumber,
-                licenseNumber: user.licenseNumber
+                licenseNumber: user.licenseNumber,
+                isApproved: user.isApproved
             }
         });
     } catch (error) {
         console.error('Login error:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// Get current user profile
+router.get('/me', authenticateToken, async (req, res) => {
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: req.user.id }
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.json({
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                phone: user.phone,
+                vehicleNumber: user.vehicleNumber,
+                licenseNumber: user.licenseNumber,
+                isApproved: user.isApproved
+            }
+        });
+    } catch (error) {
+        console.error('Fetch profile error:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// Update current user location
+router.patch('/location', authenticateToken, async (req, res) => {
+    try {
+        const { latitude, longitude } = req.body;
+
+        if (latitude === undefined || longitude === undefined) {
+            return res.status(400).json({ message: 'Latitude and longitude are required' });
+        }
+
+        await prisma.user.update({
+            where: { id: req.user.id },
+            data: {
+                latitude: parseFloat(latitude),
+                longitude: parseFloat(longitude)
+            }
+        });
+
+        res.json({ message: 'Location updated successfully' });
+    } catch (error) {
+        console.error('Update location error:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 });
