@@ -43,6 +43,8 @@ router.get('/', authenticateToken, authorizeRoles('ADMIN', 'MANAGER'), async (re
                 licenseNumber: u.licenseNumber,
                 latitude: u.latitude,
                 longitude: u.longitude,
+                isOnline: !!(u.isOnline && u.lastSeen && (new Date() - new Date(u.lastSeen) < 120000)), // 2 mins threshold
+                lastSeen: u.lastSeen,
                 createdAt: u.createdAt,
                 totalOrders: u.orders.length,
                 doneOrders: deliveredOrders.length,

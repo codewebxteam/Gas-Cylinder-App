@@ -1,8 +1,8 @@
 import { useRouter } from 'expo-router';
-import * as SecureStore from 'expo-secure-store';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 import api from '../services/api';
+import { storage } from '../services/storage';
 
 interface User {
     id: string;
@@ -32,8 +32,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         async function checkAuth() {
-            const storedToken = await SecureStore.getItemAsync('token');
-            const storedUser = await SecureStore.getItemAsync('user');
+            const storedToken = await storage.getItem('token');
+            const storedUser = await storage.getItem('user');
 
             if (storedToken && storedUser) {
                 setToken(storedToken);
@@ -54,8 +54,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 return false;
             }
 
-            await SecureStore.setItemAsync('token', token);
-            await SecureStore.setItemAsync('user', JSON.stringify(loggedUser));
+            await storage.setItem('token', token);
+            await storage.setItem('user', JSON.stringify(loggedUser));
 
             setToken(token);
             setUser(loggedUser);
@@ -70,8 +70,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     const logout = async () => {
-        await SecureStore.deleteItemAsync('token');
-        await SecureStore.deleteItemAsync('user');
+        try {
+            await api.post('/auth/logout');
+        } catch (e) {
+            console.warn('Backend logout failed:', e);
+        }
+        await storage.deleteItem('token');
+        await storage.deleteItem('user');
         setToken(null);
         setUser(null);
         router.replace('/(auth)/login' as any);

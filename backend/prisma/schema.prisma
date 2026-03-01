@@ -7,6 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum Role {
@@ -40,6 +41,8 @@ model User {
   orders          Order[]  @relation("AssignedStaff")
   latitude        Float?
   longitude       Float?
+  isOnline        Boolean  @default(false)
+  lastSeen        DateTime?
   isApproved      Boolean  @default(false)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt

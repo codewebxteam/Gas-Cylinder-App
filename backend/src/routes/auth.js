@@ -62,6 +62,15 @@ router.post('/login', async (req, res) => {
             { expiresIn: '24h' }
         );
 
+        // Update online status on login
+        await prisma.user.update({
+            where: { id: user.id },
+            data: {
+                isOnline: true,
+                lastSeen: new Date()
+            }
+        });
+
         res.json({
             token,
             user: {
@@ -72,7 +81,10 @@ router.post('/login', async (req, res) => {
                 phone: user.phone,
                 vehicleNumber: user.vehicleNumber,
                 licenseNumber: user.licenseNumber,
-                isApproved: user.isApproved
+                latitude: user.latitude,
+                longitude: user.longitude,
+                isApproved: user.isApproved,
+                isOnline: true
             }
         });
     } catch (error) {
@@ -123,13 +135,29 @@ router.patch('/location', authenticateToken, async (req, res) => {
             where: { id: req.user.id },
             data: {
                 latitude: parseFloat(latitude),
-                longitude: parseFloat(longitude)
+                longitude: parseFloat(longitude),
+                isOnline: true,
+                lastSeen: new Date()
             }
         });
 
         res.json({ message: 'Location updated successfully' });
     } catch (error) {
         console.error('Update location error:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// Logout route
+router.post('/logout', authenticateToken, async (req, res) => {
+    try {
+        await prisma.user.update({
+            where: { id: req.user.id },
+            data: { isOnline: false }
+        });
+        res.json({ message: 'Logged out successfully' });
+    } catch (error) {
+        console.error('Logout error:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 });

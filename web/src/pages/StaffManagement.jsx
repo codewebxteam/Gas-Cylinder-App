@@ -43,10 +43,8 @@ const StaffManagement = () => {
     e.preventDefault();
     try {
       if (editingStaff) {
-        // await api.put(`/staff/${editingStaff.id}`, formData);
         toast.success('Staff details updated');
       } else {
-        // await api.post('/staff', formData);
         toast.success('New staff member added');
       }
       setIsModalOpen(false);

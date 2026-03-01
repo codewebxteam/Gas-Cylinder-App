@@ -1,11 +1,13 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
+import LocationTracker from '../components/LocationTracker';
 import { AuthProvider } from '../context/AuthContext';
 
 export default function RootLayout() {
   return (
     <AuthProvider>
+      <LocationTracker />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
         <Stack.Screen name="(auth)" />

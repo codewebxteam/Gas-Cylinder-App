@@ -31,10 +31,15 @@ const DriverStatusCard = ({ driver, onFocus }) => (
         <div className="w-14 h-14 rounded-2xl bg-slate-800 flex items-center justify-center relative shadow-inner overflow-hidden border border-slate-700">
            <div className="absolute inset-0 bg-gradient-to-tr from-slate-800 to-slate-700" />
            <span className="relative text-2xl font-black text-white">{driver.name?.charAt(0)}</span>
-           <div className={`absolute bottom-1 right-1 w-3 h-3 ${driver.latitude ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-600'} border-2 border-slate-900 rounded-full`}></div>
+           <div className={`absolute bottom-1 right-1 w-3 h-3 ${driver.isOnline ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-600'} border-2 border-slate-900 rounded-full`}></div>
         </div>
         <div>
-          <h3 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors uppercase tracking-tight">{driver.name}</h3>
+          <div className="flex items-center gap-2">
+            <h3 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors uppercase tracking-tight">{driver.name}</h3>
+            {driver.isOnline && (
+              <span className="bg-emerald-500/10 text-emerald-500 text-[10px] font-black px-1.5 py-0.5 rounded border border-emerald-500/20 animate-pulse">LIVE</span>
+            )}
+          </div>
           <div className="flex items-center gap-2 text-slate-500 text-xs font-bold mt-1">
             <Truck size={12}/>
             <span>{driver.vehicleNumber || 'No Vehicle'}</span>
@@ -46,14 +51,21 @@ const DriverStatusCard = ({ driver, onFocus }) => (
       </div>
       <button 
         onClick={() => driver.latitude && onFocus([driver.latitude, driver.longitude])}
-        className="p-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-slate-400 hover:text-white transition-all border border-slate-700 active:scale-90"
+        className="p-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-slate-400 hover:text-white transition-all border border-slate-700 active:scale-90 disabled:opacity-30"
         title="Locate Driver"
+        disabled={!driver.latitude}
       >
         <Navigation size={18} />
       </button>
     </div>
 
     <div className="space-y-4">
+      {/* last seen info */}
+      {!driver.isOnline && driver.lastSeen && (
+         <div className="mb-2 text-[10px] font-bold text-slate-600 uppercase">
+             Last Active: {new Date(driver.lastSeen).toLocaleString()}
+         </div>
+      )}
       <div className="flex justify-between items-end mb-1">
         <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Shift Progress</span>
         <span className="text-sm font-black text-white">{driver.progress}%</span>
@@ -111,18 +123,25 @@ const LiveMonitoring = () => {
 
     // Initialize Map (Native Leaflet - No Context Errors)
     useEffect(() => {
-        if (!mapInstance.current && mapRef.current) {
-            mapInstance.current = L.map(mapRef.current, {
-                center: [28.6139, 77.2090], // Default Delhi
-                zoom: 13,
-                zoomControl: false // Customizing UI
-            });
+        if (mapRef.current && !mapInstance.current) {
+            try {
+                // Leaflet map initialization
+                const map = L.map(mapRef.current, {
+                    center: [28.6139, 77.2090],
+                    zoom: 13,
+                    zoomControl: false,
+                    layers: [
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        })
+                    ]
+                });
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(mapInstance.current);
-
-            L.control.zoom({ position: 'bottomright' }).addTo(mapInstance.current);
+                L.control.zoom({ position: 'bottomright' }).addTo(map);
+                mapInstance.current = map;
+            } catch (err) {
+                console.error("Map initialization error:", err);
+            }
         }
 
         return () => {
@@ -193,7 +212,6 @@ const LiveMonitoring = () => {
             if (results && results.length > 0) {
                 // Focus on first result
                 const firstResult = results[0];
-                console.log('Search Results:', firstResult);
                 
                 let lat, lng;
                 
