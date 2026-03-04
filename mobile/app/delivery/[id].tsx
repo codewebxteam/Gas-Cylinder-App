@@ -55,7 +55,7 @@ const DeliveryDetailScreen = () => {
                 const item = await taskPromise;
                 if (item) {
                     setDelivery(item);
-                    setAmount('1150');
+                    setAmount(item.amount ? item.amount.toString() : (item.quantity ? (item.quantity * 800).toString() : '800'));
                     setLoading(false);
 
                     // 3. Initiate Map & Routing (Non-blocking)
@@ -157,7 +157,11 @@ const DeliveryDetailScreen = () => {
 
         setConfirming(true);
         try {
-            await deliveryService.updateDeliveryStatus(delivery!.id, 'DELIVERED');
+            await deliveryService.updateDeliveryStatus(delivery!.id, 'DELIVERED', {
+                paymentMode,
+                amount: Number(amount),
+                txnId: paymentMode === 'UPI' ? txnId : undefined
+            });
             setDelivery(prev => prev ? { ...prev, status: 'DELIVERED' } : null);
             Alert.alert('Success', 'Delivery completed successfully!');
             router.back();
@@ -277,7 +281,7 @@ const DeliveryDetailScreen = () => {
                             />
 
                             <View style={styles.amountBox}>
-                                <Text style={styles.inputLabel}>Cash/UPI Amount</Text>
+                                <Text style={styles.inputLabel}>Amount to Collect (₹)</Text>
                                 <View style={styles.inputContainer}>
                                     <Text style={styles.currency}>₹</Text>
                                     <TextInput

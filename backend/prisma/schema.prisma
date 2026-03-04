@@ -55,6 +55,7 @@ model Order {
   customerPhone   String?
   cylinderType    String
   quantity        Int           @default(1)
+  amount          Float         @default(800)
   status          OrderStatus   @default(PENDING)
   assignedStaffId String?
   assignedStaff   User?         @relation("AssignedStaff", fields: [assignedStaffId], references: [id])
@@ -71,6 +72,7 @@ model Transaction {
   order       Order       @relation(fields: [orderId], references: [id])
   paymentType PaymentType
   amount      Float
+  referenceId String?
   timestamp   DateTime    @default(now())
 }
 

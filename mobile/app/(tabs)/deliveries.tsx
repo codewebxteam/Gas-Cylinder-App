@@ -37,7 +37,7 @@ export default function DeliveriesScreen() {
             deliveryStatus: d.status === 'PENDING' ? 'Assigned' :
                 d.status === 'OUT_FOR_DELIVERY' ? 'Out for Delivery' :
                     d.status === 'DELIVERED' ? 'Delivered' : 'Cancelled',
-            amount: 0, // Backend might need to provide this, or calculate based on type
+            amount: d.amount || (d.quantity ? d.quantity * 800 : 800),
         }));
     };
 
@@ -74,7 +74,7 @@ export default function DeliveriesScreen() {
                         contactNumber: newOrder.customerPhone || '',
                         paymentStatus: 'Pending',
                         deliveryStatus: 'Assigned',
-                        amount: 0
+                        amount: newOrder.amount || (newOrder.quantity ? newOrder.quantity * 800 : 800)
                     };
                     return [mapped, ...prev];
                 });

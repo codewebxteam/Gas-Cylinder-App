@@ -37,3 +37,7 @@ app.get('/health', (req, res) => {
 httpServer.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running with Socket.io on http://127.0.0.1:${PORT}`);
 });
+
+// Dummy comment to trigger nodemon restart
+
+// Dummy comment to trigger nodemon restart 2

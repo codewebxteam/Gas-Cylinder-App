@@ -7,6 +7,7 @@ export interface Delivery {
     customerPhone: string;
     cylinderType: string;
     quantity: number;
+    amount?: number;
     status: 'PENDING' | 'OUT_FOR_DELIVERY' | 'DELIVERED' | 'CANCELLED';
     latitude?: number;
     longitude?: number;
@@ -21,8 +22,12 @@ export const deliveryService = {
         const response = await api.get('/orders/my-tasks');
         return response.data;
     },
-    updateDeliveryStatus: async (id: string, status: string): Promise<Delivery> => {
-        const response = await api.patch(`/orders/${id}`, { status });
+    updateDeliveryStatus: async (
+        id: string,
+        status: string,
+        paymentData?: { paymentMode: string; amount: number; txnId?: string }
+    ): Promise<Delivery> => {
+        const response = await api.patch(`/orders/${id}`, { status, ...paymentData });
         return response.data;
     }
 };

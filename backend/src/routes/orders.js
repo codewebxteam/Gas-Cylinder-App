@@ -49,14 +49,18 @@ router.get('/my-tasks', authenticateToken, async (req, res) => {
 router.post('/', authenticateToken, authorizeRoles('ADMIN', 'MANAGER'), async (req, res) => {
     try {
         console.log('Order creation request body:', req.body);
-        const { customerName, customerAddress, customerPhone, cylinderType, quantity, assignedStaffId } = req.body;
+        const { customerName, customerAddress, customerPhone, cylinderType, quantity, amount, assignedStaffId } = req.body;
+        const parsedQuantity = quantity ? parseInt(quantity) : 1;
+        const parsedAmount = amount !== undefined ? parseFloat(amount) : parsedQuantity * 800;
+
         const newOrder = await prisma.order.create({
             data: {
                 customerName,
                 customerAddress,
                 customerPhone,
                 cylinderType,
-                quantity: quantity ? parseInt(quantity) : 1,
+                quantity: parsedQuantity,
+                amount: parsedAmount,
                 assignedStaffId
             }
         });
@@ -79,7 +83,7 @@ router.post('/', authenticateToken, authorizeRoles('ADMIN', 'MANAGER'), async (r
 // Update order status/assigned staff (Admin/Manager/Driver)
 router.patch('/:id', authenticateToken, async (req, res) => {
     try {
-        const { status, assignedStaffId } = req.body;
+        const { status, assignedStaffId, paymentMode, amount, txnId } = req.body;
 
         // Find existing order
         const existingOrder = await prisma.order.findUnique({
@@ -102,6 +106,25 @@ router.patch('/:id', authenticateToken, async (req, res) => {
                 assignedStaffId: assignedStaffId || undefined
             }
         });
+
+        // Handle transaction creation when marked as DELIVERED
+        if (status === 'DELIVERED' && paymentMode && amount !== undefined) {
+            const existingTx = await prisma.transaction.findUnique({
+                where: { orderId: req.params.id }
+            });
+
+            if (!existingTx) {
+                await prisma.transaction.create({
+                    data: {
+                        orderId: req.params.id,
+                        paymentType: paymentMode.toUpperCase() === 'CASH' ? 'CASH' : 'UPI',
+                        amount: parseFloat(amount),
+                        referenceId: txnId || null
+                    }
+                });
+            }
+        }
+
         res.json(updatedOrder);
     } catch (error) {
         console.error('Update order error:', error);
@@ -147,7 +170,7 @@ router.get('/report', authenticateToken, authorizeRoles('ADMIN', 'MANAGER'), asy
                     customer: order.customerName,
                     orderId: order.id.substring(0, 8).toUpperCase(),
                     amount: t.amount,
-                    ref: t.id.substring(0, 12).toUpperCase() // Using ID as fallback reference
+                    ref: t.referenceId || t.id.substring(0, 12).toUpperCase() // Using actual ref or ID fallback
                 };
 
                 if (t.paymentType === 'CASH') cashTx.push(txData);

@@ -18,7 +18,9 @@ router.get('/', authenticateToken, authorizeRoles('ADMIN', 'MANAGER'), async (re
                         status: true,
                         transactions: {
                             select: {
-                                amount: true
+                                amount: true,
+                                paymentType: true,
+                                timestamp: true
                             }
                         }
                     }
@@ -26,10 +28,15 @@ router.get('/', authenticateToken, authorizeRoles('ADMIN', 'MANAGER'), async (re
             }
         });
 
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+
         const formattedStaff = staff.map(u => {
             const deliveredOrders = u.orders.filter(o => o.status === 'DELIVERED');
             const totalCollection = deliveredOrders.reduce((sum, o) => {
-                const orderSum = o.transactions.reduce((tSum, t) => tSum + t.amount, 0);
+                const orderSum = o.transactions
+                    .filter(t => t.paymentType === 'CASH' && new Date(t.timestamp) >= startOfToday)
+                    .reduce((tSum, t) => tSum + t.amount, 0);
                 return sum + orderSum;
             }, 0);
 
@@ -143,6 +150,77 @@ router.delete('/:id', authenticateToken, authorizeRoles('ADMIN'), async (req, re
         res.json({ message: 'Staff member deleted successfully' });
     } catch (error) {
         console.error('Delete staff error:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// Get staff details by ID (Admin/Manager)
+router.get('/:id', authenticateToken, authorizeRoles('ADMIN', 'MANAGER'), async (req, res) => {
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: req.params.id },
+            include: {
+                orders: {
+                    include: {
+                        transactions: true
+                    },
+                    orderBy: {
+                        createdAt: 'desc'
+                    }
+                }
+            }
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: 'Staff not found' });
+        }
+
+        const deliveredOrders = user.orders.filter(o => o.status === 'DELIVERED');
+        const pendingOrders = user.orders.filter(o => o.status === 'PENDING');
+        const outForDeliveryOrders = user.orders.filter(o => o.status === 'OUT_FOR_DELIVERY');
+
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+
+        const totalCollection = deliveredOrders.reduce((sum, o) => {
+            const orderSum = o.transactions
+                .filter(t => t.paymentType === 'CASH' && new Date(t.timestamp) >= startOfToday)
+                .reduce((tSum, t) => tSum + t.amount, 0);
+            return sum + orderSum;
+        }, 0);
+
+        const isActuallyOnline = !!(user.isOnline && user.lastSeen && (new Date() - new Date(user.lastSeen) < 120000));
+        const hasActiveOrders = pendingOrders.length > 0 || outForDeliveryOrders.length > 0;
+
+        let status = 'Offline';
+        if (isActuallyOnline) {
+            status = hasActiveOrders ? 'On Field' : 'Active';
+        }
+
+        const staffDetails = {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            phone: user.phone,
+            vehicleNumber: user.vehicleNumber,
+            licenseNumber: user.licenseNumber,
+            latitude: user.latitude,
+            longitude: user.longitude,
+            isOnline: isActuallyOnline,
+            status,
+            lastSeen: user.lastSeen,
+            createdAt: user.createdAt,
+            totalOrders: user.orders.length,
+            doneOrders: deliveredOrders.length,
+            collection: totalCollection,
+            progress: user.orders.length > 0 ? Math.round((deliveredOrders.length / user.orders.length) * 100) : 0,
+            recentOrders: user.orders.slice(0, 50) // Return up to last 50 orders
+        };
+
+        res.json(staffDetails);
+    } catch (error) {
+        console.error('Fetch staff details error:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 });

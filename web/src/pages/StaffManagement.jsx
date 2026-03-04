@@ -1,6 +1,7 @@
 import { Calendar, Car, ClipboardList, CreditCard, Edit2, Filter, Loader2, Lock, Mail, MapPin as MapPinIcon, MessageSquare, Minus, Package, Phone, Plus, Search, Shield, User, UserPlus, UserX, XCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import socketService from '../services/socket';
 
@@ -14,6 +15,7 @@ const INDIAN_STATES = [
 ];
 
 const StaffManagement = () => {
+  const navigate = useNavigate();
   const [staff, setStaff] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -32,6 +34,7 @@ const StaffManagement = () => {
     state: '',
     cylinderType: 'Domestic 14.2kg', // Default
     quantity: 1,
+    amount: 800,
     notes: ''
   });
   const [addressSuggestions, setAddressSuggestions] = useState([]);
@@ -160,6 +163,7 @@ const StaffManagement = () => {
       customerAddress: '',
       cylinderType: 'Domestic 14.2kg',
       quantity: 1,
+      amount: 800,
       notes: ''
     });
     setIsTaskModalOpen(true);
@@ -262,7 +266,7 @@ const StaffManagement = () => {
                 <tr 
                   key={member.id} 
                   className="hover:bg-slate-800/60 transition-all group cursor-pointer border-l-2 border-transparent hover:border-blue-500"
-                  onClick={() => handleOpenTaskModal(member)}
+                  onClick={() => navigate(`/staff/${member.id}`)}
                 >
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-4">
@@ -473,7 +477,7 @@ const StaffManagement = () => {
                        <span className="h-px flex-1 bg-slate-800"></span>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       <div className="space-y-2">
                         <label className="text-[10px] font-black text-slate-500 uppercase ml-1 tracking-widest">Cylinder Type</label>
                         <div className="relative group">
@@ -495,15 +499,35 @@ const StaffManagement = () => {
                         <div className="flex items-center bg-slate-800/20 border border-slate-700/50 rounded-2xl overflow-hidden p-1.5 h-[56px] ring-offset-2 ring-offset-slate-900 transition-all focus-within:ring-2 focus-within:ring-blue-500/30">
                            <button 
                              type="button" 
-                             onClick={() => setTaskData({...taskData, quantity: Math.max(1, taskData.quantity - 1)})}
+                             onClick={() => {
+                               const newQty = Math.max(1, taskData.quantity - 1);
+                               setTaskData({...taskData, quantity: newQty, amount: newQty * 800});
+                             }}
                              className="w-12 h-full flex items-center justify-center text-rose-500 hover:bg-rose-500/10 rounded-xl transition-all"
                            > <Minus size={20} /> </button>
                            <div className="flex-1 text-center text-white font-black text-xl">{taskData.quantity}</div>
                            <button 
                              type="button" 
-                             onClick={() => setTaskData({...taskData, quantity: taskData.quantity + 1})}
+                             onClick={() => {
+                               const newQty = taskData.quantity + 1;
+                               setTaskData({...taskData, quantity: newQty, amount: newQty * 800});
+                             }}
                              className="w-12 h-full flex items-center justify-center text-emerald-500 hover:bg-emerald-500/10 rounded-xl transition-all"
                            > <Plus size={20} /> </button>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black text-slate-500 uppercase ml-1 tracking-widest">Amount (₹)</label>
+                        <div className="relative group">
+                           <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-blue-500 transition-colors">₹</span>
+                           <input 
+                             type="number"
+                             required
+                             className="w-full bg-slate-800/30 border border-slate-700/50 rounded-2xl py-4 pl-10 pr-4 text-white font-medium focus:ring-2 focus:ring-blue-500/30 outline-none transition-all placeholder:text-slate-700 h-[56px]"
+                             placeholder="800"
+                             value={taskData.amount}
+                             onChange={e => setTaskData({...taskData, amount: parseFloat(e.target.value) || 0})}
+                           />
                         </div>
                       </div>
                     </div>

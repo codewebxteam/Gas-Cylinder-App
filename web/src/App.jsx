@@ -14,6 +14,7 @@ import ManagerApproval from './pages/ManagerApproval';
 import OrderManagement from './pages/OrderManagement';
 import PendingApproval from './pages/PendingApproval';
 import Signup from './pages/Signup';
+import StaffDetails from './pages/StaffDetails';
 import StaffManagement from './pages/StaffManagement';
 
 const Unauthorized = () => (
@@ -57,6 +58,7 @@ function App() {
               {/* Admin Only Routes */}
               <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
                 <Route path="/staff" element={<StaffManagement />} />
+                <Route path="/staff/:id" element={<StaffDetails />} />
                 <Route path="/inventory" element={<Inventory />} />
                 <Route path="/approvals" element={<ManagerApproval />} />
               </Route>
