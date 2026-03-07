@@ -12,7 +12,6 @@ import LiveMonitoring from "./pages/LiveMonitoring";
 import Login from "./pages/Login";
 import OrderManagement from "./pages/OrderManagement";
 import PendingApproval from "./pages/PendingApproval";
-import Signup from "./pages/Signup";
 import StaffDetails from "./pages/StaffDetails";
 import StaffManagement from "./pages/StaffManagement";
 
@@ -59,7 +58,6 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
 
           <Route element={<ProtectedRoute allowedRoles={["MANAGER"]} />}>
