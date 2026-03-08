@@ -60,14 +60,14 @@ const Sidebar = ({ onClose }) => {
   };
 
   return (
-    <div className="h-screen w-64 bg-slate-900 text-white flex flex-col border-r border-slate-800">
+    <div className="fixed left-0 top-0 h-screen w-64 bg-slate-900 text-white flex flex-col border-r border-slate-800 z-50">
       {/* Header */}
       <div className="p-6 flex items-center justify-between">
         <div>
           <h1 className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
-            GasFlow Admin
+            {user?.role === "MANAGER" ? "GasFlow Manager" : "GasFlow Admin"}
           </h1>
-          <p className="text-xs text-slate-400 mt-1 uppercase tracking-widest font-semibold hidden sm:block">
+          <p className="text-xs text-slate-400 mt-1 tracking-widest font-semibold hidden sm:block">
             Delivery System
           </p>
         </div>
