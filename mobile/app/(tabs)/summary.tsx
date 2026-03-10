@@ -151,25 +151,51 @@ export default function SummaryScreen() {
                 <Text style={styles.sectionTitle}>Transaction History</Text>
                 <View style={styles.historyCard}>
                     {deliveries.filter(d => d.status === 'DELIVERED' && d.transactions && d.transactions.length > 0).flatMap((item) =>
-                        item.transactions!.map(t => (
-                            <View key={t.id} style={styles.historyItem}>
-                                <View style={styles.historyIcon}>
-                                    <Ionicons
-                                        name={t.paymentType === 'UPI' ? 'qr-code-outline' : 'cash-outline'}
-                                        size={20}
-                                        color={Colors.textLight}
-                                    />
+                        item.transactions!.map(t => {
+                            // Get delivery date - use createdAt as actual delivery date
+                            const deliveryDate = new Date(item.createdAt);
+                            const today = new Date();
+                            const yesterday = new Date(today);
+                            yesterday.setDate(yesterday.getDate() - 1);
+                            
+                            // Reset time to compare only dates
+                            today.setHours(0, 0, 0, 0);
+                            yesterday.setHours(0, 0, 0, 0);
+                            deliveryDate.setHours(0, 0, 0, 0);
+                            
+                            let dateStr;
+                            if (deliveryDate.getTime() === today.getTime()) {
+                                dateStr = 'Today';
+                            } else if (deliveryDate.getTime() === yesterday.getTime()) {
+                                dateStr = 'Yesterday';
+                            } else {
+                                // Format as DD-MM-YYYY
+                                const day = String(deliveryDate.getDate()).padStart(2, '0');
+                                const month = String(deliveryDate.getMonth() + 1).padStart(2, '0');
+                                const year = deliveryDate.getFullYear();
+                                dateStr = `${day}-${month}-${year}`;
+                            }
+                            
+                            return (
+                                <View key={t.id} style={styles.historyItem}>
+                                    <View style={styles.historyIcon}>
+                                        <Ionicons
+                                            name={t.paymentType === 'UPI' ? 'qr-code-outline' : 'cash-outline'}
+                                            size={20}
+                                            color={Colors.textLight}
+                                        />
+                                    </View>
+                                    <View style={styles.historyInfo}>
+                                        <Text style={styles.historyName}>{item.customerName}</Text>
+                                        <Text style={styles.historyDate}>{dateStr} • {t.paymentType}</Text>
+                                    </View>
+                                    <View style={styles.historyAmount}>
+                                        <Text style={styles.amountText}>+₹{t.amount}</Text>
+                                        <StatusBadge status="DELIVERED" />
+                                    </View>
                                 </View>
-                                <View style={styles.historyInfo}>
-                                    <Text style={styles.historyName}>{item.customerName}</Text>
-                                    <Text style={styles.historyDate}>Today • {t.paymentType}</Text>
-                                </View>
-                                <View style={styles.historyAmount}>
-                                    <Text style={styles.amountText}>+₹{t.amount}</Text>
-                                    <StatusBadge status="DELIVERED" />
-                                </View>
-                            </View>
-                        ))
+                            );
+                        })
                     )}
                     {deliveries.filter(d => d.status === 'DELIVERED' && d.transactions && d.transactions.length > 0).length === 0 && (
                         <Text style={styles.noData}>No completed deliveries yet.</Text>
