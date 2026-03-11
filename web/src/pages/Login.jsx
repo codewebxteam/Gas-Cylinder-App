@@ -2,6 +2,7 @@ import { Loader2, Lock, Mail } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import FeatureSection from "../components/FeatureSection";
 import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
@@ -27,85 +28,153 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Background blobs */}
-      <div className="absolute top-0 -left-4 w-48 lg:w-72 h-48 lg:h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-      <div className="absolute -bottom-8 right-0 w-48 lg:w-72 h-48 lg:h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+    <div className="min-h-screen flex">
+      {/* Left Side - Feature Section */}
+      <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] bg-[#F5F5F5]">
+        <FeatureSection />
+      </div>
 
-      <div className="max-w-md w-full relative">
-        <div className="bg-slate-900 shadow-2xl rounded-2xl lg:rounded-3xl p-6 lg:p-10 border border-slate-800 backdrop-blur-sm">
-          <div className="text-center mb-6 lg:mb-10">
-            <h1 className="text-2xl lg:text-4xl font-extrabold text-white mb-2 lg:mb-3">
-              Welcome Back
-            </h1>
-            <p className="text-slate-400 text-sm lg:text-base">
-              GasFlow Delivery Admin Panel
-            </p>
+      {/* Right Side - Login Form */}
+      <div className="w-full lg:w-1/2 xl:w-[45%] bg-white flex items-center justify-center p-6 lg:p-10">
+        <div className="max-w-md w-full">
+          {/* Mobile Logo */}
+          <div className="lg:hidden text-center mb-8">
+            <h1 className="text-2xl font-bold text-[#1F2933] mb-2">GasFlow</h1>
+            <p className="text-gray-500 text-sm">Delivery Admin Panel</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5 lg:space-y-6">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-300 ml-1">
-                Email Address
-              </label>
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-blue-400 transition-colors">
-                  <Mail size={18} lg:size={20} />
-                </div>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-11 lg:pl-12 py-3 lg:py-4 bg-slate-800/50 border border-slate-700 rounded-xl lg:rounded-2xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all text-base"
-                  placeholder="admin@gasflow.com"
-                  required
-                />
-              </div>
+          {/* Login Card */}
+          <div
+            className="bg-white rounded-2xl p-8 border border-gray-200"
+            style={{
+              boxShadow:
+                "0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)",
+            }}
+          >
+            <div className="text-center mb-8">
+              <h1 className="text-2xl lg:text-3xl font-bold text-[#1F2933] mb-2">
+                Welcome Back
+              </h1>
+              <p className="text-gray-500 text-sm">Sign in to continue</p>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-300 ml-1">
-                Password
-              </label>
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-blue-400 transition-colors">
-                  <Lock size={18} lg:size={20} />
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Email Field */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-[#1F2933] ml-1">
+                  Email Address
+                </label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-[#1F2933] transition-colors">
+                    <Mail size={18} />
+                  </div>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="block w-full pl-11 py-3 bg-[#F5F5F5] border border-gray-200 rounded-xl text-[#1F2933] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-gray-300 transition-all text-base"
+                    placeholder="admin@gasflow.com"
+                    required
+                  />
                 </div>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-11 lg:pl-12 py-3 lg:py-4 bg-slate-800/50 border border-slate-700 rounded-xl lg:rounded-2xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all text-base"
-                  placeholder="••••••••"
-                  required
-                />
               </div>
-            </div>
 
-            <div className="flex items-center justify-between px-1">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 rounded border-slate-700 bg-slate-800 text-blue-500 focus:ring-blue-500/50"
-                />
-                <span className="text-sm text-slate-400">Remember me</span>
-              </label>
+              {/* Password Field */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-[#1F2933] ml-1">
+                  Password
+                </label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-[#1F2933] transition-colors">
+                    <Lock size={18} />
+                  </div>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="block w-full pl-11 py-3 bg-[#F5F5F5] border border-gray-200 rounded-xl text-[#1F2933] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-gray-300 transition-all text-base"
+                    placeholder="••••••••"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Remember & Forgot */}
+              <div className="flex items-center justify-between px-1">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 rounded border-gray-300 bg-[#F5F5F5] text-[#1F2933] focus:ring-gray-300"
+                  />
+                  <span className="text-sm text-gray-500">Remember me</span>
+                </label>
+                <button
+                  type="button"
+                  className="text-sm font-medium text-[#1F2933] hover:text-gray-600 transition-colors"
+                >
+                  Forgot Password?
+                </button>
+              </div>
+
+              {/* Submit Button */}
               <button
-                type="button"
-                className="text-sm font-bold text-blue-400 hover:text-blue-300 transition-colors"
+                type="submit"
+                disabled={loading}
+                className="w-full bg-[#1F2933] hover:bg-gray-700 text-white font-semibold py-3 rounded-xl shadow-md hover:shadow-lg transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Forgot Password?
+                {loading ? <Loader2 className="animate-spin" /> : "Log In"}
               </button>
-            </div>
+            </form>
+          </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-bold py-3 lg:py-4 rounded-xl lg:rounded-2xl shadow-lg shadow-blue-600/20 hover:shadow-blue-600/40 transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              {loading ? <Loader2 className="animate-spin" /> : "Log In"}
-            </button>
-          </form>
+          {/* Mobile Trust Badges */}
+          <div className="lg:hidden mt-8">
+            <div className="text-center mb-4">
+              <p className="text-gray-400 text-sm">
+                Trusted by 500+ businesses
+              </p>
+            </div>
+            <div className="flex items-center justify-center gap-6">
+              <div className="flex items-center gap-2 text-gray-400 text-xs">
+                <svg
+                  className="w-4 h-4"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span>Secure</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-400 text-xs">
+                <svg
+                  className="w-4 h-4"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span>Fast</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-400 text-xs">
+                <svg
+                  className="w-4 h-4"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+                </svg>
+                <span>Analytics</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

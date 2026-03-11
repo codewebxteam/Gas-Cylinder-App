@@ -1,13 +1,13 @@
 import {
-   Calculator,
-   Calendar,
-   CheckCircle2,
-   CreditCard,
-   Download,
-   FileText,
-   IndianRupee,
-   Printer,
-   User,
+  Calculator,
+  Calendar,
+  CheckCircle2,
+  CreditCard,
+  Download,
+  FileCheck,
+  IndianRupee,
+  Printer,
+  User
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -38,7 +38,6 @@ const FinancialSettlement = () => {
       toast.error("Please select a driver");
       return;
     }
-
     try {
       const res = await api.get(
         `/orders/report?driverId=${selectedDriver}&date=${selectedDate}`,
@@ -56,46 +55,59 @@ const FinancialSettlement = () => {
   };
 
   return (
-    <div className="space-y-4 animate-in fade-in duration-500">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl lg:text-3xl font-bold text-white uppercase tracking-tight flex items-center gap-3">
-            Financial Settlement
-          </h2>
-          <p className="text-slate-400 mt-1">
-            End-of-day reconciliation and bank statement matching
-          </p>
-        </div>
-        {report && (
-          <div className="flex gap-3">
-            <button
-              onClick={handleExport}
-              className="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold px-6 py-3 rounded-2xl flex items-center gap-2 transition-all border border-slate-700"
-            >
-              <Download size={18} />
-              <span>Export CSV</span>
-            </button>
-            <button
-              onClick={() => window.print()}
-              className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-2xl flex items-center gap-2 transition-all shadow-lg shadow-blue-500/20"
-            >
-              <Printer size={18} />
-              <span>Print Report</span>
-            </button>
+    <div className="space-y-6 animate-in fade-in duration-500">
+      {/* Header */}
+      <div
+        className="bg-white border border-gray-200 p-5 rounded-2xl"
+        style={{ boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.04)" }}
+      >
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-gray-100 rounded-xl">
+              <Calculator className="text-gray-600" size={22} />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-[#1F2933]">
+                Financial Settlement
+              </h2>
+              <p className="text-gray-500 text-sm">
+                End-of-day reconciliation and bank statement matching
+              </p>
+            </div>
           </div>
-        )}
+          {report && (
+            <div className="flex gap-3">
+              <button
+                onClick={handleExport}
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium rounded-xl flex items-center gap-2 transition-colors text-sm"
+              >
+                <Download size={16} /> Export CSV
+              </button>
+              <button
+                onClick={() => window.print()}
+                className="px-4 py-2 bg-[#1F2933] hover:bg-gray-700 text-white font-medium rounded-xl flex items-center gap-2 transition-colors text-sm"
+              >
+                <Printer size={16} /> Print Report
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
-      <div className="bg-slate-900/50 border border-slate-800 rounded-3xl p-8 backdrop-blur-sm">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 uppercase ml-1 flex items-center gap-2">
+      {/* Filter Controls */}
+      <div
+        className="bg-white border border-gray-200 p-5 rounded-2xl"
+        style={{ boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.04)" }}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-gray-500 ml-1 flex items-center gap-1.5">
               <User size={14} /> Select Driver
             </label>
             <select
               value={selectedDriver}
               onChange={(e) => setSelectedDriver(e.target.value)}
-              className="w-full bg-slate-800 border-none rounded-xl py-3.5 px-4 text-white font-semibold focus:ring-2 focus:ring-blue-500/50 outline-none"
+              className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 px-3 text-[#1F2933] text-sm focus:ring-2 focus:ring-gray-200 focus:border-gray-300 outline-none transition-all"
             >
               <option value="">Choose a staff member...</option>
               {drivers.map((d) => (
@@ -105,101 +117,105 @@ const FinancialSettlement = () => {
               ))}
             </select>
           </div>
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 uppercase ml-1 flex items-center gap-2">
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-gray-500 ml-1 flex items-center gap-1.5">
               <Calendar size={14} /> Settlement Date
             </label>
             <input
               type="date"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className="w-full bg-slate-800 border-none rounded-xl py-3.5 px-4 text-white font-semibold focus:ring-2 focus:ring-blue-500/50 outline-none color-scheme-dark"
+              className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 px-3 text-[#1F2933] text-sm focus:ring-2 focus:ring-gray-200 focus:border-gray-300 outline-none transition-all"
             />
           </div>
           <button
             onClick={generateReport}
-            className="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-blue-600/20 transition-all flex items-center justify-center gap-2"
+            className="group relative px-5 py-2.5 bg-gradient-to-r from-[#1F2933] to-gray-700 text-white font-semibold rounded-xl flex items-center justify-center gap-2 transition-all hover:shadow-lg hover:shadow-gray-300/50"
           >
-            <Calculator size={20} />
+            <Calculator size={18} />
             Check Reconciliation
           </button>
         </div>
       </div>
 
+      {/* Report */}
       {report ? (
-        <div className="space-y-8 animate-in slide-in-from-bottom-6 duration-500">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-slate-900 border border-slate-800 p-6 rounded-3xl">
-              <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-1">
+        <div className="space-y-6 animate-in slide-in-from-bottom-6 duration-500">
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="bg-white border border-gray-200 p-5 rounded-2xl">
+              <p className="text-gray-500 text-xs font-medium mb-1">
                 Cylinders Delivered
               </p>
-              <h4 className="text-3xl font-black text-white">
+              <h4 className="text-3xl font-bold text-[#1F2933]">
                 {report.totalCylinders}{" "}
-                <span className="text-sm font-medium text-slate-500">
-                  units
-                </span>
+                <span className="text-sm font-normal text-gray-400">units</span>
               </h4>
             </div>
-            <div className="bg-slate-900 border border-slate-800 p-6 rounded-3xl">
-              <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-1">
+            <div className="bg-white border border-gray-200 p-5 rounded-2xl">
+              <p className="text-gray-500 text-xs font-medium mb-1">
                 Cash Collected
               </p>
-              <h4 className="text-3xl font-black text-emerald-400">
+              <h4 className="text-3xl font-bold text-emerald-600">
                 ₹{report.totalCash}
               </h4>
             </div>
-            <div className="bg-slate-900 border border-slate-800 p-6 rounded-3xl">
-              <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-1">
+            <div className="bg-white border border-gray-200 p-5 rounded-2xl">
+              <p className="text-gray-500 text-xs font-medium mb-1">
                 UPI Payments
               </p>
-              <h4 className="text-3xl font-black text-blue-400">
+              <h4 className="text-3xl font-bold text-blue-600">
                 ₹{report.totalUPI}
               </h4>
             </div>
-            <div className="bg-blue-600 p-6 rounded-3xl shadow-xl shadow-blue-900/20">
-              <p className="text-blue-100/60 text-[10px] font-black uppercase tracking-widest mb-1">
+            <div className="bg-[#1F2933] p-5 rounded-2xl">
+              <p className="text-gray-300 text-xs font-medium mb-1">
                 Expected Collection
               </p>
-              <h4 className="text-3xl font-black text-white">
+              <h4 className="text-3xl font-bold text-white">
                 ₹{report.expectedTotal}
               </h4>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Transaction Tables */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Cash Table */}
-            <div className="bg-slate-900/50 border border-slate-800 rounded-3xl overflow-hidden">
-              <div className="p-6 bg-slate-800/30 border-b border-slate-800 flex items-center justify-between">
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  <IndianRupee size={20} className="text-emerald-500" />
-                  Cash Transactions
+            <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+              <div className="p-4 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
+                <h3 className="text-base font-semibold text-[#1F2933] flex items-center gap-2">
+                  <IndianRupee size={18} className="text-emerald-500" /> Cash
+                  Transactions
                 </h3>
-                <span className="bg-emerald-500/10 text-emerald-400 text-[10px] font-black px-2 py-1 rounded">
-                  TOTAL: ₹{report.totalCash}
+                <span className="bg-emerald-50 text-emerald-600 text-xs font-medium px-2 py-1 rounded-lg">
+                  ₹{report.totalCash}
                 </span>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
                   <thead>
-                    <tr className="text-slate-500 text-[10px] font-black uppercase tracking-widest border-b border-slate-800">
-                      <th className="px-6 py-4">Time</th>
-                      <th className="px-6 py-4">Customer</th>
-                      <th className="px-6 py-4 text-right">Amount</th>
+                    <tr className="text-gray-500 text-xs font-medium border-b border-gray-100">
+                      <th className="px-4 py-3">Time</th>
+                      <th className="px-4 py-3">Customer</th>
+                      <th className="px-4 py-3 text-right">Amount</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800">
+                  <tbody className="divide-y divide-gray-100">
                     {report.cashTransactions.map((tx) => (
-                      <tr key={tx.id} className="text-sm text-slate-300">
-                        <td className="px-6 py-4 font-medium text-slate-500">
+                      <tr
+                        key={tx.id}
+                        className="text-sm hover:bg-gray-50 transition-colors"
+                      >
+                        <td className="px-4 py-3 text-gray-500 font-medium">
                           {tx.time}
                         </td>
-                        <td className="px-6 py-4">
-                          <p className="text-white font-bold">{tx.customer}</p>
-                          <p className="text-[10px] font-bold text-slate-600 tracking-tighter">
-                            {tx.orderId}
+                        <td className="px-4 py-3">
+                          <p className="font-medium text-[#1F2933]">
+                            {tx.customer}
                           </p>
+                          <p className="text-xs text-gray-400">{tx.orderId}</p>
                         </td>
-                        <td className="px-6 py-4 text-right font-black text-white">
+                        <td className="px-4 py-3 text-right font-semibold text-[#1F2933]">
                           ₹{tx.amount}
                         </td>
                       </tr>
@@ -210,38 +226,41 @@ const FinancialSettlement = () => {
             </div>
 
             {/* UPI Table */}
-            <div className="bg-slate-900/50 border border-slate-800 rounded-3xl overflow-hidden">
-              <div className="p-6 bg-slate-800/30 border-b border-slate-800 flex items-center justify-between">
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  <CreditCard size={20} className="text-blue-500" />
-                  UPI Transactions
+            <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+              <div className="p-4 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
+                <h3 className="text-base font-semibold text-[#1F2933] flex items-center gap-2">
+                  <CreditCard size={18} className="text-blue-500" /> UPI
+                  Transactions
                 </h3>
-                <span className="bg-blue-500/10 text-blue-400 text-[10px] font-black px-2 py-1 rounded">
-                  TOTAL: ₹{report.totalUPI}
+                <span className="bg-blue-50 text-blue-600 text-xs font-medium px-2 py-1 rounded-lg">
+                  ₹{report.totalUPI}
                 </span>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
                   <thead>
-                    <tr className="text-slate-500 text-[10px] font-black uppercase tracking-widest border-b border-slate-800">
-                      <th className="px-6 py-4">Time</th>
-                      <th className="px-6 py-4">Customer & Ref</th>
-                      <th className="px-6 py-4 text-right">Amount</th>
+                    <tr className="text-gray-500 text-xs font-medium border-b border-gray-100">
+                      <th className="px-4 py-3">Time</th>
+                      <th className="px-4 py-3">Customer & Ref</th>
+                      <th className="px-4 py-3 text-right">Amount</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800">
+                  <tbody className="divide-y divide-gray-100">
                     {report.upiTransactions.map((tx) => (
-                      <tr key={tx.id} className="text-sm text-slate-300">
-                        <td className="px-6 py-4 font-medium text-slate-500">
+                      <tr
+                        key={tx.id}
+                        className="text-sm hover:bg-gray-50 transition-colors"
+                      >
+                        <td className="px-4 py-3 text-gray-500 font-medium">
                           {tx.time}
                         </td>
-                        <td className="px-6 py-4">
-                          <p className="text-white font-bold">{tx.customer}</p>
-                          <p className="text-[10px] font-bold text-blue-500/60 uppercase tracking-tighter">
-                            {tx.ref}
+                        <td className="px-4 py-3">
+                          <p className="font-medium text-[#1F2933]">
+                            {tx.customer}
                           </p>
+                          <p className="text-xs text-blue-500">{tx.ref}</p>
                         </td>
-                        <td className="px-6 py-4 text-right font-black text-white">
+                        <td className="px-4 py-3 text-right font-semibold text-[#1F2933]">
                           ₹{tx.amount}
                         </td>
                       </tr>
@@ -252,33 +271,36 @@ const FinancialSettlement = () => {
             </div>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 p-8 rounded-[2.5rem] flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="flex items-center gap-6">
-              <div className="w-16 h-16 rounded-3xl bg-emerald-500/20 flex items-center justify-center text-emerald-500">
-                <CheckCircle2 size={32} />
+          {/* Confirmation */}
+          <div className="bg-white border border-gray-200 p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center">
+                <CheckCircle2 size={24} className="text-emerald-500" />
               </div>
               <div>
-                <h3 className="text-2xl font-black text-white uppercase tracking-tight">
+                <h3 className="text-lg font-semibold text-[#1F2933]">
                   Ready for Settlement
                 </h3>
-                <p className="text-slate-500 font-bold text-sm uppercase">
+                <p className="text-gray-500 text-sm">
                   Reconciliation matches with driver's mobile app report
                 </p>
               </div>
             </div>
-            <button className="w-full md:w-auto px-12 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-2xl shadow-xl shadow-emerald-900/20 transition-all uppercase tracking-widest text-sm">
+            <button className="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-xl transition-colors">
               Confirm Handover
             </button>
           </div>
         </div>
       ) : (
-        <div className="py-24 flex flex-col items-center justify-center text-center opacity-30 select-none">
-          <FileText size={80} className="text-slate-700 mb-6" />
-          <h3 className="text-2xl font-black text-slate-700 uppercase tracking-[0.2em]">
+        <div className="py-20 flex flex-col items-center justify-center text-center bg-white border border-gray-200 rounded-2xl">
+          <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mb-4">
+            <FileCheck size={32} className="text-gray-400" />
+          </div>
+          <h3 className="text-lg font-semibold text-[#1F2933] mb-1">
             No Report Generated
           </h3>
-          <p className="text-slate-800 font-black uppercase text-sm mt-2">
-            Select a driver and date to begin reconciliation
+          <p className="text-gray-500 text-sm">
+            Select a driver and date to generate reconciliation
           </p>
         </div>
       )}
