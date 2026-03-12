@@ -61,14 +61,21 @@ const Sidebar = ({ onClose, isMobileOpen }) => {
 
   return (
  ayush-feature
+    <div
+      className="h-full w-64 bg-white text-[#1F2933] flex flex-col border-r border-gray-200"
+      style={{ boxShadow: "2px 0 4px 0 rgba(0, 0, 0, 0.03)" }}
+    >
+
+ ayush-feature
     <div className="h-full w-64 bg-slate-900 text-white flex flex-col border-r border-slate-800">
+ main
       {/* Header */}
       <div className="p-6 flex items-center justify-between">
         <div className="flex-1 min-w-0">
-          <h1 className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent truncate">
+          <h1 className="text-xl lg:text-2xl font-bold text-[#1F2933] truncate">
             {user?.role === "MANAGER" ? "GasFlow Manager" : "GasFlow Admin"}
           </h1>
-          <p className="text-xs text-slate-400 mt-1 tracking-widest font-semibold hidden sm:block">
+          <p className="text-xs text-gray-500 mt-1 tracking-widest font-semibold hidden sm:block">
             Delivery System
           </p>
         </div>
@@ -76,7 +83,7 @@ const Sidebar = ({ onClose, isMobileOpen }) => {
         {isMobileOpen && (
           <button
             onClick={onClose}
-            className="lg:hidden p-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors flex-shrink-0"
+            className="lg:hidden p-1 text-gray-400 hover:text-[#1F2933] hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
             aria-label="Close menu"
           >
             <X size={20} />
@@ -105,8 +112,8 @@ const Sidebar = ({ onClose, isMobileOpen }) => {
               onClick={handleLinkClick}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
                 isActive
-                  ? "bg-blue-600 text-white shadow-lg shadow-blue-900/40"
-                  : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                  ? "bg-[#1F2933] text-white shadow-md"
+                  : "text-gray-500 hover:bg-[#F5F5F5] hover:text-[#1F2933]"
               }`}
             >
               <item.icon
@@ -114,7 +121,7 @@ const Sidebar = ({ onClose, isMobileOpen }) => {
                 className={
                   isActive
                     ? "text-white"
-                    : "group-hover:text-white flex-shrink-0"
+                    : "group-hover:text-[#1F2933] flex-shrink-0"
                 }
               />
               <span className="font-medium truncate">{item.name}</span>
@@ -124,10 +131,10 @@ const Sidebar = ({ onClose, isMobileOpen }) => {
       </nav>
 
       {/* Footer - Logout */}
-      <div className="p-4 border-t border-slate-800">
+      <div className="p-4 border-t border-gray-200">
         <button
           onClick={logout}
-          className="flex items-center gap-3 w-full px-4 py-3 text-slate-400 hover:bg-red-500/10 hover:text-red-400 rounded-xl transition-all duration-200"
+          className="flex items-center gap-3 w-full px-4 py-3 text-gray-500 hover:bg-red-50 hover:text-red-600 rounded-xl transition-all duration-200"
         >
           <LogOut size={20} />
           <span className="font-medium">Logout</span>

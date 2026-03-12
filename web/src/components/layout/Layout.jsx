@@ -28,11 +28,11 @@ const Layout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex">
+    <div className="min-h-screen bg-[#F5F5F5] flex">
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden"
           onClick={closeSidebar}
         />
       )}
@@ -52,17 +52,18 @@ const Layout = () => {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 lg:ml-64">
         {/* Mobile Header with Menu Button */}
-        <div className="lg:hidden bg-slate-900/50 backdrop-blur-md border-b border-slate-800 px-4 py-3 flex items-center gap-4 sticky top-0 z-30">
+        <div
+          className="lg:hidden bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-4 sticky top-0 z-30"
+          style={{ boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.05)" }}
+        >
           <button
             onClick={toggleSidebar}
-            className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+            className="p-2 text-gray-500 hover:text-[#1F2933] hover:bg-gray-100 rounded-lg transition-colors"
             aria-label="Toggle menu"
           >
             {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
-          <h1 className="text-lg font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
-            GasFlow Admin
-          </h1>
+          <h1 className="text-lg font-bold text-[#1F2933]">GasFlow Admin</h1>
         </div>
 
         {/* Desktop Navbar */}
@@ -71,7 +72,7 @@ const Layout = () => {
         </div>
 
         {/* Main Content */}
-        <main className="flex-1 p-0 lg:p-0 overflow-x-hidden">
+        <main className="flex-1 p-4 lg:p-6 overflow-x-hidden">
           <Outlet />
         </main>
       </div>

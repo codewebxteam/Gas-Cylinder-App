@@ -24,24 +24,27 @@ import {
 import api from "../services/api";
 
 const DashboardCard = ({ title, value, icon: Icon, color, trend }) => (
-  <div className="bg-slate-900/50 border border-slate-800 p-4 lg:p-5 rounded-2xl hover:border-slate-700 transition-all group">
+  <div
+    className="bg-white border border-gray-200 p-4 lg:p-5 rounded-2xl hover:border-gray-300 transition-all group"
+    style={{ boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.04)" }}
+  >
     <div className="flex justify-between items-start mb-3">
       <div
-        className={`p-2.5 rounded-xl bg-${color}-500/10 text-${color}-400 group-hover:scale-110 transition-transform`}
+        className={`p-2.5 rounded-xl bg-gray-100 text-gray-600 group-hover:scale-110 transition-transform`}
       >
         <Icon size={20} />
       </div>
       {trend && (
         <span
-          className={`text-xs font-bold px-2 py-1 rounded-lg flex items-center gap-1 ${trend > 0 ? "bg-emerald-500/10 text-emerald-400" : "bg-rose-500/10 text-rose-400"}`}
+          className={`text-xs font-medium px-2 py-1 rounded-lg flex items-center gap-1 ${trend > 0 ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"}`}
         >
           <ArrowUpRight size={14} />
           {trend}%
         </span>
       )}
     </div>
-    <p className="text-slate-400 text-sm font-medium">{title}</p>
-    <h3 className="text-xl font-bold text-white mt-1">{value}</h3>
+    <p className="text-gray-500 text-sm font-medium">{title}</p>
+    <h3 className="text-xl font-bold text-[#1F2933] mt-1">{value}</h3>
   </div>
 );
 
@@ -62,7 +65,7 @@ const Dashboard = () => {
     { name: "UPI", val: stats.upiPayments },
   ];
 
-  const COLORS = ["#3b82f6", "#06b6d4"];
+  const COLORS = ["#1F2933", "#6B7280"];
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -92,23 +95,26 @@ const Dashboard = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
         <div>
-          <h2 className="text-2xl lg:text-3xl font-bold text-white">
+          <h2 className="text-2xl lg:text-3xl font-bold text-[#1F2933]">
             Dashboard Overview
           </h2>
-          <p className="text-slate-400 mt-1 text-sm lg:text-base">
+          <p className="text-gray-500 mt-1 text-sm lg:text-base">
             Real-time status of your delivery operations
           </p>
         </div>
-        <div className="px-3 lg:px-4 py-2 bg-slate-800 border border-slate-700 rounded-xl flex items-center gap-2 lg:gap-3 w-fit">
+        <div
+          className="px-3 lg:px-4 py-2 bg-white border border-gray-200 rounded-xl flex items-center gap-2 lg:gap-3 w-fit"
+          style={{ boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.04)" }}
+        >
           <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-          <span className="text-xs lg:text-sm font-semibold text-slate-300">
+          <span className="text-xs lg:text-sm font-medium text-gray-600">
             Live Updates
           </span>
         </div>
       </div>
 
       {/* Stats Grid - Responsive */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 lg:gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         <DashboardCard
           title="Active Drivers"
           value={stats.activeDrivers}
@@ -154,13 +160,16 @@ const Dashboard = () => {
       {/* Charts Section - Responsive Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Delivery Velocity Chart */}
-        <div className="lg:col-span-2 bg-slate-900/50 border border-slate-800 p-4 lg:p-6 rounded-2xl">
+        <div
+          className="lg:col-span-2 bg-white border border-gray-200 p-4 lg:p-6 rounded-2xl"
+          style={{ boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.04)" }}
+        >
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
-            <h3 className="text-base lg:text-lg font-bold text-white flex items-center gap-2">
-              <TrendingUp className="text-blue-500" size={18} />
+            <h3 className="text-base lg:text-lg font-bold text-[#1F2933] flex items-center gap-2">
+              <TrendingUp className="text-[#1F2933]" size={18} />
               Delivery Velocity (Today)
             </h3>
-            <select className="bg-slate-800 border border-slate-700 text-slate-300 text-xs font-bold rounded-lg px-3 py-2 focus:outline-none w-fit">
+            <select className="bg-gray-100 border border-gray-200 text-[#1F2933] text-xs font-medium rounded-lg px-3 py-2 focus:outline-none w-fit">
               <option>Last 24 Hours</option>
               <option>Yesterday</option>
             </select>
@@ -170,39 +179,39 @@ const Dashboard = () => {
               <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="colorDel" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#1F2933" stopOpacity={0.2} />
+                    <stop offset="95%" stopColor="#1F2933" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid
                   strokeDasharray="3 3"
                   vertical={false}
-                  stroke="#1e293b"
+                  stroke="#E5E7EB"
                 />
                 <XAxis
                   dataKey="name"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: "#64748b", fontSize: 11 }}
+                  tick={{ fill: "#6B7280", fontSize: 11 }}
                 />
                 <YAxis
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: "#64748b", fontSize: 11 }}
+                  tick={{ fill: "#6B7280", fontSize: 11 }}
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#0f172a",
-                    border: "1px solid #1e293b",
+                    backgroundColor: "#FFFFFF",
+                    border: "1px solid #E5E7EB",
                     borderRadius: "12px",
                     fontSize: "12px",
                   }}
-                  itemStyle={{ color: "#fff" }}
+                  itemStyle={{ color: "#1F2933" }}
                 />
                 <Area
                   type="monotone"
                   dataKey="deliveries"
-                  stroke="#3b82f6"
+                  stroke="#1F2933"
                   strokeWidth={2}
                   lg:strokeWidth={3}
                   fillOpacity={1}
@@ -214,8 +223,11 @@ const Dashboard = () => {
         </div>
 
         {/* Payment Split Chart */}
-        <div className="bg-slate-900/50 border border-slate-800 p-4 lg:p-6 rounded-2xl">
-          <h3 className="text-base lg:text-lg font-bold text-white mb-4">
+        <div
+          className="bg-white border border-gray-200 p-4 lg:p-6 rounded-2xl"
+          style={{ boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.04)" }}
+        >
+          <h3 className="text-base lg:text-lg font-bold text-[#1F2933] mb-4">
             Payment Split
           </h3>
           <div className="h-[150px] lg:h-[180px] w-full">
@@ -224,7 +236,7 @@ const Dashboard = () => {
                 <CartesianGrid
                   strokeDasharray="3 3"
                   horizontal={false}
-                  stroke="#1e293b"
+                  stroke="#E5E7EB"
                 />
                 <XAxis type="number" hide />
                 <YAxis
@@ -232,14 +244,14 @@ const Dashboard = () => {
                   type="category"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: "#f8fafc", fontWeight: "bold" }}
+                  tick={{ fill: "#1F2933", fontWeight: "bold" }}
                   width={50}
                 />
                 <Tooltip
                   cursor={{ fill: "transparent" }}
                   contentStyle={{
-                    backgroundColor: "#0f172a",
-                    border: "1px solid #1e293b",
+                    backgroundColor: "#FFFFFF",
+                    border: "1px solid #E5E7EB",
                     borderRadius: "12px",
                   }}
                 />
@@ -255,11 +267,11 @@ const Dashboard = () => {
             </ResponsiveContainer>
           </div>
           <div className="space-y-3 lg:space-y-4 mt-4 lg:mt-6">
-            <div className="flex justify-between items-center p-3 bg-slate-800/30 rounded-xl border border-slate-800">
-              <span className="text-xs lg:text-sm font-medium text-slate-400">
+            <div className="flex justify-between items-center p-3 bg-gray-50 rounded-xl border border-gray-200">
+              <span className="text-xs lg:text-sm font-medium text-gray-500">
                 Total Collection
               </span>
-              <span className="text-base lg:text-lg font-bold text-white">
+              <span className="text-base lg:text-lg font-bold text-[#1F2933]">
                 ₹{stats.cashCollected + stats.upiPayments}
               </span>
             </div>
