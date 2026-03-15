@@ -715,7 +715,6 @@ const StaffManagement = () => {
                 >
                   <option value="DRIVER">Driver</option>
                   <option value="MANAGER">Manager</option>
-                  <option value="ADMIN">Admin</option>
                 </select>
               </div>
 
