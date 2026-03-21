@@ -35,3 +35,19 @@ The database is managed by Prisma and includes the following models:
 - **Prisma**: ORM for database management.
 - **PostgreSQL**: Hosted on Prisma Accelerate.
 - **Prisma Accelerate**: Providing connection pooling and caching.
+
+## Deployment to Render
+
+1.  **Create a New Web Service** on Render.com.
+2.  **Connect your GitHub Repository**.
+3.  **Root Directory**: Set to `backend` if you are deploying from a monorepo, otherwise leave it empty.
+4.  **Environment Configuration**:
+    - **Runtime**: `Node`
+    - **Build Command**: `npm install && npm run build`
+    - **Start Command**: `npm start`
+5.  **Environment Variables**:
+    - `DATABASE_URL`: Add your Prisma Accelerate URL.
+    - `JWT_SECRET`: Add a secure secret for auth.
+    - `PORT`: 5000 (usually Render sets this automatically).
+6.  **Blueprints**: A `render.yaml` file is provided to simplify this process. You can just use the "Blueprint" feature on Render.
+
