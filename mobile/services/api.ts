@@ -5,7 +5,7 @@ import { storage } from './storage';
 const isDevelopment = typeof __DEV__ !== 'undefined' && __DEV__;
 
 // API URL configuration - Always use production backend
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'https://gas-cylinder-app.onrender.com';
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'https://gas-cylinder-app-m2re.vercel.app';
 
 // NOTE: Backend routes use /api prefix
 const api = axios.create({

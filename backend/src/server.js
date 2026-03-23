@@ -43,7 +43,7 @@ const authLimiter = rateLimit({
 
 app.use(limiter);
 app.use(cors({
-    origin: ['http://localhost:8081', 'http://10.0.2.2:8081', 'https://gas-cylinder-app.onrender.com'],
+    origin: ['http://localhost:8081', 'http://10.0.2.2:8081', 'https://gas-cylinder-app-m2re.vercel.app'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']

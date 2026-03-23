@@ -12,7 +12,7 @@ if (envApiUrl) {
 } else if (isDevelopment) {
     SOCKET_URL = 'http://10.0.2.2:5002'; // Match backend port
 } else {
-    SOCKET_URL = 'https://gas-cylinder-app.onrender.com';
+    SOCKET_URL = 'https://gas-cylinder-app-m2re.vercel.app';
 }
 
 class SocketService {
