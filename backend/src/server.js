@@ -15,8 +15,17 @@ const { createServer } = require('http');
 const { initSocket } = require('./lib/socket');
 
 const app = express();
-const httpServer = createServer(app);
-const io = initSocket(httpServer);
+
+// Only create HTTP server and Socket.IO for local development
+let httpServer, io;
+if (process.env.NODE_ENV !== 'production') {
+    httpServer = createServer(app);
+    io = initSocket(httpServer);
+} else {
+    // For Vercel, just use express app without Socket.IO
+    console.log('Running in production mode - Socket.IO disabled for serverless');
+}
+
 const PORT = process.env.PORT || 5002;
 
 // Basic rate limiting
@@ -76,7 +85,17 @@ app.use((req, res) => {
     res.status(404).json({ message: 'Route not found' });
 });
 
-httpServer.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Server running on http://127.0.0.1:${PORT}`);
+// Start server for local development
+if (process.env.NODE_ENV !== 'production' && httpServer) {
+    httpServer.listen(PORT, '0.0.0.0', () => {
+        console.log(`🚀 Server running on http://127.0.0.1:${PORT}`);
+        console.log(`🔒 Rate limiting enabled`);
+    });
+} else {
+    // For production/Vercel, just log that it's ready
+    console.log(`🚀 Server ready for production deployment`);
     console.log(`🔒 Rate limiting enabled`);
-});
+}
+
+// Export for Vercel
+module.exports = app;
