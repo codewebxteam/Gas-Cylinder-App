@@ -105,6 +105,8 @@ router.patch('/status', authenticateToken, async (req, res) => {
         });
         const { getIO } = require('../lib/socket');
         getIO().emit('driverStatusUpdate', { driverId: req.user.id, isOnline });
+        // web panel ke liye bhi emit karo
+        getIO().emit('staffStatusUpdate', { id: req.user.id, isOnline });
         res.json({ success: true });
     } catch (error) {
         console.error('Status update error:', error);
