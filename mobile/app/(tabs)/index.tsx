@@ -176,12 +176,20 @@ export default function DashboardScreen() {
         setRefreshing(false);
     }, [fetchData, user]);
 
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    const todayDeliveries = deliveries.filter(d => {
+        const date = new Date(d.scheduledDeliveryDate || d.createdAt);
+        return date >= todayStart;
+    });
+
     const stats = {
-        assigned: deliveries.length,
-        delivered: deliveries.filter(d => d.status === 'DELIVERED').length,
-        pending: deliveries.filter(d => d.status === 'PENDING' || d.status === 'OUT_FOR_DELIVERY').length,
-        cash: deliveries.reduce((total, d) => total + (d.transactions?.filter((t: any) => t.paymentType === 'CASH').reduce((sum: number, t: any) => sum + t.amount, 0) || 0), 0),
-        upi: deliveries.reduce((total, d) => total + (d.transactions?.filter((t: any) => t.paymentType === 'UPI').reduce((sum: number, t: any) => sum + t.amount, 0) || 0), 0),
+        assigned: todayDeliveries.length,
+        delivered: todayDeliveries.filter(d => d.status === 'DELIVERED').length,
+        pending: todayDeliveries.filter(d => d.status === 'PENDING' || d.status === 'OUT_FOR_DELIVERY').length,
+        cash: todayDeliveries.reduce((total, d) => total + (d.transactions?.filter((t: any) => t.paymentType === 'CASH').reduce((sum: number, t: any) => sum + t.amount, 0) || 0), 0),
+        upi: todayDeliveries.reduce((total, d) => total + (d.transactions?.filter((t: any) => t.paymentType === 'UPI').reduce((sum: number, t: any) => sum + t.amount, 0) || 0), 0),
     };
 
     const totalEarnings = stats.cash + stats.upi;
